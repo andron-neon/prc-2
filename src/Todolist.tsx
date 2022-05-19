@@ -6,12 +6,12 @@ import {CheckBox} from "./component/CheckBox";
 
 
 export type PropsType = {
-    todolistID:string
+    todolistID: string
     title: string
     list: Array<ArrayType>
-    removeList: (elID: string) => void
-    changeFilter: (todolistID:string,filter: FilterValuesType) => void
-    addTask: (newTitle: string) => void
+    removeList: (todolistID: string,elID: string) => void
+    changeFilter: (todolistID: string, filter: FilterValuesType) => void
+    addTask: (todolistID: string,newTitle: string) => void
     checkBoxChange: (elID: string, checkedValue: boolean) => void
     filter: FilterValuesType
 }
@@ -25,7 +25,7 @@ export const Todolist = (props: PropsType) => {
     const [error, setError] = useState(false)
     const addTaskHandler = () => {
         if (title.trim() !== '') {
-            props.addTask(title.trim())
+            props.addTask(props.todolistID,title.trim())
             setTitle("")
         } else {
             setError(true)
@@ -38,7 +38,7 @@ export const Todolist = (props: PropsType) => {
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             if (title.trim() !== '') {
-                props.addTask(title.trim())
+                props.addTask(props.todolistID,title.trim())
                 setTitle('')
 
             }
@@ -46,12 +46,12 @@ export const Todolist = (props: PropsType) => {
     }
 
     const CheckBoxHandler = (elID: string, checkedValue: boolean) => {
-        props.checkBoxChange(elID,checkedValue )
+        props.checkBoxChange(elID, checkedValue)
     }
-    const changeFilterHandler = (todolistID:string,filterValue: FilterValuesType) => {
-        props.changeFilter(todolistID,filterValue)
+    const changeFilterHandler = (todolistID: string, filterValue: FilterValuesType) => {
+        props.changeFilter(todolistID, filterValue)
     }
-    const removeListHandler = (elID:string) => props.removeList(elID)
+    const removeListHandler = (elID: string) => props.removeList(props.todolistID,elID)
 
     return (
         <div>
@@ -67,12 +67,13 @@ export const Todolist = (props: PropsType) => {
             {error && <div className={styles.errorMessage}>Title is required</div>}
             <ul>
                 {props.list.map(el => {
-                    return (
+                        return (
 
                             <li key={el.id}>
-                                <CheckBox isDone={el.isDone} callBack={(checkedValue: boolean)=>CheckBoxHandler(el.id, checkedValue)}/>
+                                <CheckBox isDone={el.isDone} callBack={
+                                    (checkedValue: boolean) => CheckBoxHandler(el.id, checkedValue)}/>
                                 <span>{el.title}</span>
-                                <button onClick={()=>removeListHandler(el.id)}>X</button>
+                                <button onClick={() => removeListHandler(el.id)}>X</button>
                             </li>
                         )
                     }
@@ -81,11 +82,11 @@ export const Todolist = (props: PropsType) => {
             </ul>
             <div>
 
-                <Button name={"all"} callBack={() => changeFilterHandler(props.todolistID,"all")}
+                <Button name={"all"} callBack={() => changeFilterHandler(props.todolistID, "all")}
                         className={props.filter === "all" ? styles.activeFilter : ''}/>
-                <Button name={"active"} callBack={() => changeFilterHandler(props.todolistID,"active")}
+                <Button name={"active"} callBack={() => changeFilterHandler(props.todolistID, "active")}
                         className={props.filter === "active" ? styles.activeFilter : ''}/>
-                <Button name={"completed"} callBack={() => changeFilterHandler(props.todolistID,"completed")}
+                <Button name={"completed"} callBack={() => changeFilterHandler(props.todolistID, "completed")}
                         className={props.filter === "completed" ? styles.activeFilter : ''}/>
 
             </div>

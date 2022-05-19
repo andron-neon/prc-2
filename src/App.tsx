@@ -13,52 +13,67 @@ export type TodolistsType = {
 
 function App() {
 
+    let todolistID1 = v1()
+    let todolistID2 = v1()
+
+
     let [todolists, setTodolists] = useState<Array<TodolistsType>>([
-        {id: v1(), title: 'My property111', filter: 'all'},
-        {id: v1(), title: 'My property222', filter: 'all'}
+        {id: todolistID1, title: 'My property111', filter: 'all'},
+        {id: todolistID2, title: 'My property222', filter: 'all'}
     ])
 
-    let [propertyList, setPropertyList] = useState<Array<ArrayType>>([
-        {id: v1(), title: "flat", isDone: true},
-        {id: v1(), title: "cottage", isDone: true},
-        {id: v1(), title: "garage", isDone: false},
-        {id: v1(), title: "country house", isDone: false}
-    ])
-    const addTask = (newTitle: string) => {
-        setPropertyList([{id: v1(), title: newTitle, isDone: false}, ...propertyList])
+    let [tasks, setTasks] = useState({
+        [todolistID1]: [
+            {id: v1(), title: 'HTML&CSS', isDone: true},
+            {id: v1(), title: 'JS', isDone: false},
+            {id: v1(), title: 'REACT', isDone: true},
+            {id: v1(), title: 'REDUX', isDone: false},
+            {id: v1(), title: 'GraphQL', isDone: true}
+        ],
+            [todolistID2]:[
+        {id: v1(), title: 'HTML&CSS2', isDone: true},
+        {id: v1(), title: 'JS2', isDone: false},
+        {id: v1(), title: 'REACT2', isDone: true},
+        {id: v1(), title: 'REDUX2', isDone: false},
+        {id: v1(), title: 'GraphQL2', isDone: true}
+    ]
+}
+
+)
+
+    // let [propertyList, setPropertyList] = useState<Array<ArrayType>>([
+    //     {id: v1(), title: "flat", isDone: true},
+    //     {id: v1(), title: "cottage", isDone: true},
+    //     {id: v1(), title: "garage", isDone: false},
+    //     {id: v1(), title: "country house", isDone: false}
+    // ])
+    const addTask = (todolistID: string,title: string) => {
+        let newTask = {id: v1(), title: title, isDone: false}
+        setTasks({...tasks, [todolistID]: [newTask,...tasks[todolistID]]})
     }
-    //const [filter, setFilter] = useState<FilterValuesType>("all")
-
     const checkBoxChange = (elID: string, checkedValue: boolean) => {
-        setPropertyList(propertyList.map(el => el.id === elID ? {...el, isDone: checkedValue} : el))
+       // setPropertyList(propertyList.map(el => el.id === elID ? {...el, isDone: checkedValue} : el))
     }
 
-    const changeFilter = (todolistID:string,filter: FilterValuesType) => {
-        setTodolists(todolists.map(el => el.id === todolistID ? {...el,filter} : el))
+    const changeFilter = (todolistID: string, filter: FilterValuesType) => {
+        setTodolists(todolists.map(el => el.id === todolistID ? {...el, filter} : el))
     }
 
-    let removeList = (elID: string) => {
-        setPropertyList(propertyList.filter(el => el.id !== elID))
+    let removeList = (todolistID: string,elID: string) => {
+        setTasks({...tasks, [todolistID]: tasks[todolistID].filter(el=>el.id!== elID)})
+        //setPropertyList(propertyList.filter(el => el.id !== elID))
     }
-    // let objForRender = propertyList
-    // if (filter === "active") {
-    //     objForRender = propertyList.filter(el => !el.isDone)
-    // }
-    // if (filter === "completed") {
-    //     objForRender = propertyList.filter(el => el.isDone)
-    // }
-
 
     return (
         <div className="App">
             {todolists.map((el) => {
 
-                let objForRender = propertyList
+                let objForRender = tasks[el.id]
                 if (el.filter === "active") {
-                    objForRender = propertyList.filter(el => !el.isDone)
+                    objForRender = tasks[el.id].filter(el => !el.isDone)
                 }
                 if (el.filter === "completed") {
-                    objForRender = propertyList.filter(el => el.isDone)
+                    objForRender = tasks[el.id].filter(el => el.isDone)
                 }
 
                 return (
@@ -66,7 +81,7 @@ function App() {
                         key={el.id}
                         todolistID={el.id}
                         title={el.title}
-                        list={objForRender}
+                         list={objForRender}
                         removeList={removeList}
                         changeFilter={changeFilter}
                         addTask={addTask}
